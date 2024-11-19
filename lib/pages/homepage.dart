@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow/components/sidebar.dart';
+import 'package:taskflow/pages/completed.dart';
 import 'package:taskflow/pages/taskpage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final List<Widget> _pages = [
     const TaskPage(),
-    const TaskPage(),
+    const CompletedPage(),
     const TaskPage(),
     const Center(
         child: Text("Settings Content", style: TextStyle(fontSize: 24))),
