@@ -23,8 +23,12 @@ class _TaskPageState extends State<TaskPage> {
     setState(() {
       if (_taskList[index][3] == 'Pending') {
         _taskList[index][3] = 'Done';
+        _taskList[index][5] = DateTime.now().toString();
+        _taskList[index][6] = 'Yes';
       } else {
         _taskList[index][3] = 'Pending';
+        _taskList[index][5] = '';
+        _taskList[index][6] = '';
       }
     });
     await _saveTasksToFile();
@@ -84,10 +88,116 @@ class _TaskPageState extends State<TaskPage> {
     }
   }
 
+  void _addNewTask() {
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController dueDateController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add New Task'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(labelText: 'Title'),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(labelText: 'Description'),
+              ),
+              TextField(
+                controller: dueDateController,
+                decoration: const InputDecoration(labelText: 'Due Date'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  int newTaskId = _taskList.isEmpty
+                      ? 1
+                      : int.parse(_taskList.last[0].toString()) + 1;
+
+                  _taskList.add([
+                    newTaskId.toString(),
+                    titleController.text,
+                    descriptionController.text,
+                    'Pending',
+                    dueDateController.text,
+                    '',
+                    ''
+                  ]);
+                });
+                _saveTasksToFile();
+                Navigator.pop(context);
+              },
+              child: const Text('Add Task'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(18, 18, 18, 1),
+      appBar: AppBar(
+        title: const Text(
+          'Task List',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color.fromRGBO(18, 18, 18, 1),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 32, 0),
+            child: GestureDetector(
+              onTap: _addNewTask,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(4, 4),
+                    ),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add, color: Colors.black),
+                    SizedBox(width: 4),
+                    Text(
+                      'Add Task',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: _taskList.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
