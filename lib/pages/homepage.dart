@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:taskflow/components/sidebar.dart';
 import 'package:taskflow/pages/aboutpage.dart';
 import 'package:taskflow/pages/completed.dart';
@@ -9,6 +10,7 @@ import 'package:csv/csv.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:collection/collection.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,6 +50,8 @@ class _HomePageState extends State<HomePage> {
                 await _uploadCSV();
                 await _checkIfFileExists();
                 _refreshPage();
+              } else if (index == 6) {
+                await _openFolderContainingCSVFile();
               } else {
                 setState(() {
                   _selectedIndex = index;
@@ -81,11 +85,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _refreshPage() {
-    Navigator.pop(context); // Pop the current page
+    Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const HomePage(), // Reload the same page
+        builder: (context) => const HomePage(),
       ),
     );
   }
@@ -97,6 +101,23 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _filePath = savedFilePath;
     });
+  }
+
+  Future<void> _openFolderContainingCSVFile() async {
+    if (_filePath != null) {
+      final directoryPath = File(_filePath!).parent.path.replaceAll('\\', '/');
+
+      final Uri folderUri = Uri.parse('file:///$directoryPath');
+      print('Folder URI: $folderUri');
+
+      if (await canLaunchUrl(folderUri)) {
+        await launchUrl(folderUri);
+      } else {
+        print('Could not open the folder');
+      }
+    } else {
+      print('No file path available');
+    }
   }
 
   Future<void> _createCSV() async {
@@ -115,7 +136,7 @@ class _HomePageState extends State<HomePage> {
         'Task 1',
         'Complete the documentation',
         'Pending',
-        '2024-11-21',
+        DateFormat('d/M/yyyy').format(DateTime.now()),
         '',
         'No'
       ],

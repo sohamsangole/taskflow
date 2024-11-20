@@ -18,6 +18,7 @@ class SideBar extends StatelessWidget {
           const Spacer(),
           _buildMenuItem(context, Icons.file_open, 'Create', 4),
           _buildMenuItem(context, Icons.file_upload, 'Upload', 5),
+          _buildMenuItem(context, Icons.folder, 'CSV Folder', 6),
         ],
       ),
     );
