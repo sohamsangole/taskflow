@@ -253,6 +253,24 @@ class _TaskPageState extends State<TaskPage> {
     );
   }
 
+  Future<bool> _checkFileExists() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? filePath = prefs.getString('filePath');
+
+    if (filePath == null) {
+      return false;
+    } else {
+      File file = File(filePath);
+      bool exists = await file.exists();
+
+      if (exists) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -267,7 +285,19 @@ class _TaskPageState extends State<TaskPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 32, 0),
             child: GestureDetector(
-              onTap: _addNewTask,
+              onTap: () async {
+                bool fileExists = await _checkFileExists();
+                if (fileExists) {
+                  _addNewTask();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'File does not exist! Please check your storage settings.'),
+                    ),
+                  );
+                }
+              },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 decoration: BoxDecoration(
