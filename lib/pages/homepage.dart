@@ -18,6 +18,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  String? _filePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFileExists();
+  }
+
   final List<Widget> _pages = [
     const TaskPage(),
     const CompletedPage(),
@@ -47,7 +55,33 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: _filePath == null
+          ? Center(
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                color: Colors.black.withOpacity(0.7),
+                child: const Text(
+                  'No CSV File Saved Yet.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            )
+          : null,
     );
+  }
+
+  Future<void> _checkIfFileExists() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedFilePath = prefs.getString('filePath');
+
+    setState(() {
+      _filePath = savedFilePath;
+    });
   }
 
   Future<void> _createCSV() async {
