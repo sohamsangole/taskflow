@@ -30,9 +30,7 @@ class _HomePageState extends State<HomePage> {
     const TaskPage(),
     const CompletedPage(),
     const PendingPage(),
-    const Center(
-        child: Text("Settings Content", style: TextStyle(fontSize: 24))),
-    AboutPage(),
+    const AboutPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -41,7 +39,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           SideBar(
             onMenuItemTap: (index) {
-              if (index == 5) {
+              if (index == 4) {
                 _createCSV();
               } else {
                 setState(() {
