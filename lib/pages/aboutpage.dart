@@ -27,7 +27,7 @@ class AboutPage extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40.0),
                     child: Text(
-                      'TaskFlow is a project/task management software designed to help individuals and teams stay organized and productive. With a simple, intuitive interface, users can create tasks, set deadlines, track progress, and collaborate with team members. Whether you are managing personal projects or working within a team, TaskFlow is designed to streamline task management and improve workflow efficiency.',
+                      'I created taskflow with the idea that while many platforms focus on team collaboration, there are fewer tools designed for tracking individual progress. taskflow is built for personal use, helping users stay organized and productive by creating tasks, setting deadlines, and tracking progress effortlessly.',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
