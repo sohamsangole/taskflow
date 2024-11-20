@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:collection/collection.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -38,9 +39,15 @@ class _HomePageState extends State<HomePage> {
       body: Row(
         children: [
           SideBar(
-            onMenuItemTap: (index) {
+            onMenuItemTap: (index) async {
               if (index == 4) {
-                _createCSV();
+                await _createCSV();
+                await _checkIfFileExists();
+                _refreshPage();
+              } else if (index == 5) {
+                await _uploadCSV();
+                await _checkIfFileExists();
+                _refreshPage();
               } else {
                 setState(() {
                   _selectedIndex = index;
@@ -70,6 +77,16 @@ class _HomePageState extends State<HomePage> {
               ),
             )
           : null,
+    );
+  }
+
+  void _refreshPage() {
+    Navigator.pop(context); // Pop the current page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomePage(), // Reload the same page
+      ),
     );
   }
 
@@ -117,6 +134,53 @@ class _HomePageState extends State<HomePage> {
       print('File path saved in SharedPreferences: $path');
     } else {
       print('No directory selected.');
+    }
+  }
+
+  Future<void> _uploadCSV() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv'],
+    );
+
+    if (result != null) {
+      String filePath = result.files.single.path!;
+      final file = File(filePath);
+
+      try {
+        String fileContent = await file.readAsString();
+        List<List<dynamic>> csvData =
+            const CsvToListConverter().convert(fileContent);
+
+        List<String> expectedHeaders = [
+          'Task ID',
+          'Title',
+          'Description',
+          'Status',
+          'Due Date',
+          'Completion Date',
+          'Completed On Time'
+        ];
+
+        List<dynamic> headers = csvData.isNotEmpty ? csvData[0] : [];
+
+        if (!const ListEquality().equals(headers, expectedHeaders)) {
+          return;
+        }
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('filePath', filePath);
+
+        setState(() {
+          _filePath = filePath;
+        });
+
+        print('CSV uploaded successfully');
+      } catch (e) {
+        print('Error: $e');
+      }
+    } else {
+      print('No file selected.');
     }
   }
 }
