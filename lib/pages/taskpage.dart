@@ -97,29 +97,114 @@ class _TaskPageState extends State<TaskPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Add New Task'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-              ),
-              TextField(
-                controller: dueDateController,
-                decoration: const InputDecoration(labelText: 'Due Date'),
-              ),
-            ],
+          backgroundColor: const Color(0x00121212),
+          title: const Text(
+            'Add New Task',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20, // Increased font size for the title
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Title',
+                    labelStyle: TextStyle(color: Colors.white),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                  ),
+                  cursorColor: Colors.green,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18, // Increased font size for the input
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                    labelStyle: TextStyle(color: Colors.white),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                  ),
+                  cursorColor: Colors.green,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18, // Increased font size for the input
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: dueDateController,
+                  decoration: const InputDecoration(
+                    labelText: 'Due Date',
+                    labelStyle: TextStyle(color: Colors.white),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                  ),
+                  cursorColor: Colors.green,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18, // Increased font size for the input
+                  ),
+                  onTap: () async {
+                    // Disable the keyboard on tap
+                    FocusScope.of(context).requestFocus(FocusNode());
+
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            primaryColor: Colors.green,
+                            colorScheme:
+                                ColorScheme.light(primary: Colors.green),
+                            buttonTheme: ButtonThemeData(
+                              textTheme: ButtonTextTheme.primary,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    if (pickedDate != null) {
+                      // Format the date as day/month/year
+                      String formattedDate =
+                          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                      dueDateController.text =
+                          formattedDate; // Set the picked date to the controller
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
+              style: ButtonStyle(
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                overlayColor:
+                    WidgetStateProperty.all(Colors.green.withOpacity(0.2)),
+              ),
               child: const Text('Cancel'),
             ),
             TextButton(
@@ -142,7 +227,15 @@ class _TaskPageState extends State<TaskPage> {
                 _saveTasksToFile();
                 Navigator.pop(context);
               },
-              child: const Text('Add Task'),
+              style: ButtonStyle(
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                overlayColor:
+                    WidgetStateProperty.all(Colors.green.withOpacity(0.2)),
+              ),
+              child: const Text(
+                'Add Task',
+              ),
             ),
           ],
         );
@@ -168,7 +261,7 @@ class _TaskPageState extends State<TaskPage> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.green,
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
