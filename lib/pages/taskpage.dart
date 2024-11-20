@@ -378,12 +378,26 @@ class _TaskPageState extends State<TaskPage> {
                       fontSize: 14,
                     ),
                   ),
-                  trailing: Text(
-                    "Due: " + task[4],
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 18,
-                    ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Due: " + task[4],
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 18,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.cancel, color: Colors.red),
+                        onPressed: () {
+                          _deleteTask(index);
+                        },
+                      ),
+                    ],
                   ),
                   onTap: () {
                     _toggleTaskStatus(index);
@@ -392,5 +406,12 @@ class _TaskPageState extends State<TaskPage> {
               },
             ),
     );
+  }
+
+  void _deleteTask(int index) async {
+    setState(() {
+      _taskList.removeAt(index);
+    });
+    await _saveTasksToFile();
   }
 }
