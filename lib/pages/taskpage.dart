@@ -27,11 +27,16 @@ class _TaskPageState extends State<TaskPage> {
         _taskList[index][5] = DateFormat('d/M/yyyy').format(DateTime.now());
         var completedDate = DateTime.now();
         var dueDate = DateFormat('d/M/yyyy').parse(_taskList[index][4]);
-        if (completedDate.isBefore(dueDate)) {
+        dueDate =
+            DateTime(dueDate.year, dueDate.month, dueDate.day, 23, 59, 59);
+        if (completedDate.isBefore(dueDate) ||
+            completedDate.isAtSameMomentAs(dueDate) ||
+            dueDate == completedDate) {
           _taskList[index][6] = 'Yes';
         } else {
           _taskList[index][6] = 'No';
         }
+        print("$dueDate , $completedDate");
       } else {
         _taskList[index][3] = 'Pending';
         _taskList[index][5] = '';
@@ -328,7 +333,6 @@ class _TaskPageState extends State<TaskPage> {
                 } else {
                   textColor = Colors.green[600]!;
                 }
-                print(task);
                 return ListTile(
                   title: Text(
                     task[1].toString(),

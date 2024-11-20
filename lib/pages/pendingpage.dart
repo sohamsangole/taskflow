@@ -53,7 +53,10 @@ class _PendingPageState extends State<PendingPage> {
       task[5] = DateFormat('d/M/yyyy').format(DateTime.now());
 
       var dueDate = DateFormat('d/M/yyyy').parse(task[4]);
-      if (completedDate.isBefore(dueDate)) {
+      dueDate = DateTime(dueDate.year, dueDate.month, dueDate.day, 23, 59, 59);
+      if (completedDate.isBefore(dueDate) ||
+          completedDate.isAtSameMomentAs(dueDate) ||
+          dueDate == completedDate) {
         task[6] = 'Yes';
       } else {
         task[6] = 'No';
