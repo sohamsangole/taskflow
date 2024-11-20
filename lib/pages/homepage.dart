@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow/components/sidebar.dart';
+import 'package:taskflow/pages/aboutpage.dart';
 import 'package:taskflow/pages/completed.dart';
 import 'package:taskflow/pages/pendingpage.dart';
 import 'package:taskflow/pages/taskpage.dart';
@@ -23,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     const PendingPage(),
     const Center(
         child: Text("Settings Content", style: TextStyle(fontSize: 24))),
-    const Center(child: Text("About Content", style: TextStyle(fontSize: 24))),
+    AboutPage(),
   ];
   @override
   Widget build(BuildContext context) {
