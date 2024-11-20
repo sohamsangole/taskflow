@@ -109,7 +109,7 @@ class _CompletedPageState extends State<CompletedPage> {
 
                 return ListTile(
                   title: Text(
-                    task[1], // Task Title
+                    task[1].toString(),
                     style: const TextStyle(
                       color: Colors.green,
                       fontSize: 28,
@@ -119,7 +119,7 @@ class _CompletedPageState extends State<CompletedPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        task[2],
+                        "Completed on : " + task[5].toString(),
                         style: const TextStyle(
                           color: Colors.green,
                           fontSize: 14,

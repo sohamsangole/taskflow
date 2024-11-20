@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
@@ -23,8 +24,14 @@ class _TaskPageState extends State<TaskPage> {
     setState(() {
       if (_taskList[index][3] == 'Pending') {
         _taskList[index][3] = 'Done';
-        _taskList[index][5] = DateTime.now().toString();
-        _taskList[index][6] = 'Yes';
+        _taskList[index][5] = DateFormat('d/M/yyyy').format(DateTime.now());
+        var completedDate = DateTime.now();
+        var dueDate = DateFormat('d/M/yyyy').parse(_taskList[index][4]);
+        if (completedDate.isBefore(dueDate)) {
+          _taskList[index][6] = 'Yes';
+        } else {
+          _taskList[index][6] = 'No';
+        }
       } else {
         _taskList[index][3] = 'Pending';
         _taskList[index][5] = '';
@@ -165,7 +172,7 @@ class _TaskPageState extends State<TaskPage> {
                     DateTime? pickedDate = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
+                      firstDate: DateTime.now(),
                       lastDate: DateTime(2101),
                       builder: (BuildContext context, Widget? child) {
                         return Theme(
@@ -183,11 +190,9 @@ class _TaskPageState extends State<TaskPage> {
                     );
 
                     if (pickedDate != null) {
-                      // Format the date as day/month/year
                       String formattedDate =
                           "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                      dueDateController.text =
-                          formattedDate; // Set the picked date to the controller
+                      dueDateController.text = formattedDate;
                     }
                   },
                 ),
@@ -292,7 +297,25 @@ class _TaskPageState extends State<TaskPage> {
         ],
       ),
       body: _taskList.isEmpty
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.green,
+                ),
+                SizedBox(
+                  width: 18,
+                ),
+                Text(
+                  "No Tasks!",
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 36,
+                  ),
+                )
+              ],
+            ))
           : ListView.builder(
               itemCount: _taskList.length,
               itemBuilder: (context, index) {
@@ -305,24 +328,24 @@ class _TaskPageState extends State<TaskPage> {
                 } else {
                   textColor = Colors.green[600]!;
                 }
-
+                print(task);
                 return ListTile(
                   title: Text(
-                    task[1],
+                    task[1].toString(),
                     style: TextStyle(
                       color: textColor,
                       fontSize: 28,
                     ),
                   ),
                   subtitle: Text(
-                    task[2],
+                    task[2].toString(),
                     style: TextStyle(
                       color: textColor,
                       fontSize: 14,
                     ),
                   ),
                   trailing: Text(
-                    task[3],
+                    "Due: " + task[4],
                     style: TextStyle(
                       color: textColor,
                       fontSize: 18,

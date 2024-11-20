@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
+import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,8 +48,16 @@ class _PendingPageState extends State<PendingPage> {
     setState(() {
       var task = _taskList[index];
       task[3] = 'Done';
-      task[5] = DateTime.now().toString();
-      task[6] = 'Yes';
+
+      var completedDate = DateTime.now();
+      task[5] = DateFormat('d/M/yyyy').format(DateTime.now());
+
+      var dueDate = DateFormat('d/M/yyyy').parse(task[4]);
+      if (completedDate.isBefore(dueDate)) {
+        task[6] = 'Yes';
+      } else {
+        task[6] = 'No';
+      }
       _taskList.removeAt(index);
       _completedTasks.add(task);
     });
@@ -108,7 +117,7 @@ class _PendingPageState extends State<PendingPage> {
 
                 return ListTile(
                   title: Text(
-                    task[1],
+                    task[1].toString(),
                     style: const TextStyle(
                       color: Colors.orange,
                       fontSize: 28,
@@ -118,7 +127,7 @@ class _PendingPageState extends State<PendingPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        task[2],
+                        "Due: " + task[4],
                         style: const TextStyle(
                           color: Colors.orange,
                           fontSize: 14,
